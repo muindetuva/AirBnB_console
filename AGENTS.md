@@ -170,3 +170,72 @@ Each must include at least:
 - Every test method must have a docstring (complete sentence)
 - Test files must pass pycodestyle
 - Test files must be executable
+
+## Step 12: Console Test Suite
+
+### Goal
+Generate tests/test_console.py with tests for the HBNBCommand interpreter.
+
+### Required imports
+import unittest
+from unittest.mock import patch
+from io import StringIO
+from console import HBNBCommand
+
+### Class definition
+class TestHBNBCommand(unittest.TestCase):
+    """Test cases for the HBNBCommand console interpreter."""
+
+### Required test cases
+
+test_prompt_attribute:
+    """Test that the console prompt is set correctly."""
+    assert HBNBCommand.prompt == '(hbnb) '
+
+test_empty_line_no_output:
+    """Test that an empty line produces no output."""
+    with patch('sys.stdout', new=StringIO()) as f:
+        HBNBCommand().onecmd('')
+        self.assertEqual(f.getvalue(), '')
+    Note: use f.getvalue() == '' — NOT f.getvalue().strip() == ''
+    An empty line must produce exactly empty output, not a stripped newline.
+
+test_quit_returns_true:
+    """Test that quit command returns True to exit the loop."""
+    assert HBNBCommand().onecmd('quit') is True
+
+test_create_missing_class:
+    onecmd('create') → '** class name missing **'
+
+test_create_invalid_class:
+    onecmd('create MyModel') → "** class doesn't exist **"
+
+test_show_missing_class:
+    onecmd('show') → '** class name missing **'
+
+test_show_invalid_class:
+    onecmd('show MyModel') → "** class doesn't exist **"
+
+test_show_missing_id:
+    onecmd('show BaseModel') → '** instance id missing **'
+
+test_destroy_missing_class:
+    onecmd('destroy') → '** class name missing **'
+
+test_all_invalid_class:
+    onecmd('all MyModel') → "** class doesn't exist **"
+
+test_update_missing_class:
+    onecmd('update') → '** class name missing **'
+
+### All output-checking tests use this pattern — no exceptions
+with patch('sys.stdout', new=StringIO()) as f:
+    HBNBCommand().onecmd('<command>')
+    self.assertEqual(f.getvalue().strip(), '<expected output>')
+
+### Critical constraints
+- No test method may call print() directly
+- Every test method must have a complete sentence docstring
+- Error strings must match the Exact Error Strings in AGENTS.md exactly —
+  including the straight apostrophe in "class doesn't exist"
+- File must pass pycodestyle and be executable
